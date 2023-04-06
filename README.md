@@ -6,7 +6,9 @@ Many things will change in future and the server itself is not stable yet!
 ***
 
 ### API
-**Soon!**
+**[Available here!](/kebab-api)**
+
+***
 
 ### Used libraries
 | Library                                                               | Usecase                                                                               |
