@@ -5,7 +5,7 @@ Many things will change in future and the server itself is not stable yet!
 
 ***
 
-### API
+### Plugin API
 **[Available here!](/kebab-api)**
 
 ***
