@@ -4,7 +4,7 @@
         <!-- Console logger for debugging (prints stacktrace) -->
         <Console name="ConsoleDebug" target="SYSTEM_OUT">
             <PatternLayout
-                    pattern="%highlight{[%d{yyyy.MM.dd - HH:mm:ss]}[%p][%c{1}] %m%n}{FATAL=black, ERROR=red, WARN=yellow, INFO=white, DEBUG=white, TRACE=white}"
+                    pattern="[%d{yyyy.MM.dd-HH:mm:ss]}[%style{%p}{cyan}][%style{%c{1}}{yellow}] %highlight{%m%n}{FATAL=black, ERROR=red, WARN=yellow, INFO=white, DEBUG=white, TRACE=white}"
                     disableAnsi="false"/>
         </Console>
 
@@ -20,8 +20,8 @@
     </Appenders>
 
     <Loggers>
-        <Root level="TRACE">
-            <AppenderRef ref="ConsoleDebug"/>
+        <Root level="DEBUG">
+            <AppenderRef level="INFO" ref="ConsoleDebug"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
