@@ -4,8 +4,6 @@ import org.kebab.api.plugins.Plugin;
 import org.kebab.api.plugins.PluginManager;
 import org.kebab.common.plugin.PluginConfiguration;
 import org.kebab.server.KebabServer;
-import org.kebab.server.events.KebabEventManager;
-import org.kebab.server.scheduler.KebabScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,16 +25,16 @@ public final class KebabPluginManager implements PluginManager {
     private final File pluginFolder;
     private final KebabPluginClassLoader pluginClassLoader;
     private final KebabServer server;
-    private final KebabEventManager eventManager;
-    private final KebabScheduler scheduler;
-    public KebabPluginManager(KebabServer server, KebabEventManager eventManager, KebabScheduler scheduler) {
+    public KebabPluginManager(KebabServer server) {
         this.pluginFolder = new File("./plugins");
         this.plugins = new HashMap<>();
         this.pluginClassLoader = new KebabPluginClassLoader(new URL[0]);
         this.server = server;
-        this.eventManager = eventManager;
-        this.scheduler = scheduler;
-        if (!pluginFolder.exists()) pluginFolder.mkdir();
+        if (!pluginFolder.exists()) {
+            if (!pluginFolder.mkdir()) {
+                LOGGER.error("Cannot create plugin directory! Please make sure permissions are setup correctly.");
+            }
+        }
     }
 
     private void startPlugins() {
@@ -84,7 +82,7 @@ public final class KebabPluginManager implements PluginManager {
                     this.pluginClassLoader.addPath(jarFile.toPath());
 
                     Class<?> clazz = this.pluginClassLoader.loadClass(main.get());
-                    Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance(this.server, this, this.eventManager, this.scheduler, pluginConfiguration);
+                    Plugin plugin = (Plugin) clazz.getDeclaredConstructor().newInstance(this.server, pluginConfiguration);
                     this.plugins.put(plugin.getPluginName(), plugin);
                     return Optional.of(plugin);
                 }
