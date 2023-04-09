@@ -1,4 +1,4 @@
-package org.kebab.server.network.io;
+package org.kebab.api.packet.io;
 
 import net.querz.nbt.io.NBTOutputStream;
 import net.querz.nbt.tag.CompoundTag;
@@ -24,7 +24,7 @@ public final class KebabOutputStream extends DataOutputStream {
         this(new ByteArrayOutputStream());
     }
 
-    public void writeString(String string, Charset charset) throws IOException {
+    public void writeString(String string) throws IOException {
         byte[] bytes = string.getBytes();
         writeVarInt(bytes.length);
         write(bytes);

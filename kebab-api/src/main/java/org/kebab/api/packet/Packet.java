@@ -1,4 +1,4 @@
-package org.kebab.server.network.packet;
+package org.kebab.api.packet;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

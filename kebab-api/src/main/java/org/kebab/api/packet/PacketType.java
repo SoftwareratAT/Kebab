@@ -1,4 +1,4 @@
-package org.kebab.server.network.packet;
+package org.kebab.api.packet;
 
 public enum PacketType {
     HANDSHAKE_IN,

@@ -9,21 +9,19 @@ import org.kebab.server.entity.KebabPlayer;
 import org.kebab.server.network.channel.Channel;
 import org.kebab.server.network.channel.ChannelPacketHandler;
 import org.kebab.server.network.channel.ChannelPacketRead;
-import org.kebab.server.network.io.KebabInputStream;
-import org.kebab.server.network.io.KebabOutputStream;
-import org.kebab.server.network.packet.IngoingPacket;
-import org.kebab.server.network.packet.OutgoingPacket;
+import org.kebab.api.packet.io.KebabInputStream;
+import org.kebab.api.packet.io.KebabOutputStream;
+import org.kebab.api.packet.IngoingPacket;
+import org.kebab.api.packet.OutgoingPacket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
@@ -140,9 +138,9 @@ public class ClientConnection extends Thread {
                     int size = read.getSize();
                     byte packetId = read.getPacketId();
                     Class<? extends IngoingPacket> packetType = switch (clientState) {
-                        case HANDSHAKE -> Protocol.getIngoingHandshakePackets().get(packetId);
-                        case LOGIN -> Protocol.getIngoingLoginPackets().get(packetId);
-                        case PLAY -> Protocol.getIngoingPlayPackets().get(packetId);
+                        case HANDSHAKE -> KebabPacketManager.getIngoingHandshakePackets().get(packetId);
+                        case LOGIN -> KebabPacketManager.getIngoingLoginPackets().get(packetId);
+                        case PLAY -> KebabPacketManager.getIngoingPlayPackets().get(packetId);
                         default -> throw new IllegalStateException("Illegal ClientState!");
                     };
                     if (packetType == null) {
@@ -178,7 +176,7 @@ public class ClientConnection extends Thread {
 
     public void sendBrand(Component brand) throws IOException {
         KebabOutputStream output = new KebabOutputStream();
-        output.writeString(LegacyComponentSerializer.legacySection().serialize(brand), StandardCharsets.UTF_8);
+        output.writeString(LegacyComponentSerializer.legacySection().serialize(brand));
         sendPluginMessage("minecraft:brand", output.toByteArray());
     }
 

@@ -1,6 +1,6 @@
 package org.kebab.server.network.channel;
 
-import org.kebab.server.network.packet.OutgoingPacket;
+import org.kebab.api.packet.OutgoingPacket;
 
 public final class ChannelPacketWrite {
     private OutgoingPacket packet;

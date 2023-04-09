@@ -1,6 +1,6 @@
 package org.kebab.server.network.channel;
 
-import org.kebab.server.network.packet.IngoingPacket;
+import org.kebab.api.packet.IngoingPacket;
 
 import java.io.DataInput;
 

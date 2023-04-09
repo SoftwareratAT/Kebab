@@ -1,4 +1,4 @@
-package org.kebab.server.network.io;
+package org.kebab.api.packet.io;
 
 import net.kyori.adventure.key.Key;
 import net.querz.nbt.io.NBTInputStream;
@@ -6,7 +6,6 @@ import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.Tag;
 import org.kebab.api.inventory.ItemStack;
 import org.kebab.common.KebabRegistry;
-import org.kebab.server.inventory.KebabItemStack;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,12 +25,12 @@ public final class KebabInputStream extends DataInputStream {
 
     public ItemStack readItemStack() throws IOException {
         if (!readBoolean()) {
-            return KebabItemStack.AIR;
+            return ItemStack.AIR;
         } else {
             Key key = KebabRegistry.ITEM_REGISTRY.fromId(readVarInt());
             byte amount = readByte();
             CompoundTag nbt = readCompoundTag();
-            return new KebabItemStack(key, amount, nbt);
+            return ItemStack.create(key, amount, nbt);
         }
     }
 

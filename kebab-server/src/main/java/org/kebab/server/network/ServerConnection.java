@@ -1,6 +1,5 @@
 package org.kebab.server.network;
 
-import org.kebab.api.entity.Entity;
 import org.kebab.server.KebabServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ServerConnection extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerConnection.class);
@@ -48,6 +46,7 @@ public final class ServerConnection extends Thread {
             LOGGER.info("Closing connection...");
         } catch (Exception exception) {
             LOGGER.error("Error in ServerSocket", exception);
+            start();
         }
     }
 

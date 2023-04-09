@@ -2,11 +2,11 @@ package org.kebab.server.network.channel;
 
 import net.kyori.adventure.key.Key;
 import org.kebab.common.utils.Pair;
-import org.kebab.server.network.io.KebabInputStream;
-import org.kebab.server.network.io.KebabOutputStream;
-import org.kebab.server.network.packet.IngoingPacket;
-import org.kebab.server.network.packet.OutgoingPacket;
-import org.kebab.server.network.packet.Packet;
+import org.kebab.api.packet.io.KebabInputStream;
+import org.kebab.api.packet.io.KebabOutputStream;
+import org.kebab.api.packet.IngoingPacket;
+import org.kebab.api.packet.OutgoingPacket;
+import org.kebab.api.packet.Packet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
