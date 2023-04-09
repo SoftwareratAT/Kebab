@@ -3,9 +3,11 @@ package org.kebab.common;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import net.kyori.adventure.key.Key;
+import net.querz.nbt.tag.CompoundTag;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.kebab.common.utils.ConsoleColor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ import java.util.Optional;
 public final class KebabRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(KebabRegistry.class);
 
+    private static final Constructor<?> KEBAB_ITEMSTACK_CONSTRUCTOR;
     public static final BlockEntityRegistry BLOCK_ENTITY_TYPE;
     public static final ItemRegistry ITEM_REGISTRY;
     public static final MenuRegistry MENU_REGISTRY;
@@ -37,12 +42,11 @@ public final class KebabRegistry {
         OBJECTS = new ArrayList<>();
         JSON_PARSER = new JSONParser();
         File cacheFile = new File("./cache");
-        if (!cacheFile.exists()) {
-            cacheFile.mkdir();
-        }
-        if (!cacheFile.isDirectory()) {
-            cacheFile.delete();
-            cacheFile.mkdir();
+        if (!cacheFile.exists() || !cacheFile.isDirectory()) {
+            if (!cacheFile.isDirectory()) cacheFile.delete();
+            if (!cacheFile.mkdir()) {
+                LOGGER.error("Cannot create cache directory! Please make sure permissions are setup correctly.");
+            }
         }
         String name = "registries.json";
         File file = new File(cacheFile, name);
@@ -57,7 +61,6 @@ public final class KebabRegistry {
 
         if (!file.exists()) {
             LOGGER.warn("Please inform a Kebab developer about this error!");
-            LOGGER.info("Shutting down...");
             System.exit(4);
         }
 
@@ -96,12 +99,21 @@ public final class KebabRegistry {
             LOGGER.error("Cannot read registries.json from cache", exception);
             LOGGER.info("Deleting registries.json for renew.");
             file.delete();
-            LOGGER.info("Shutting down...");
             System.exit(4);
         }
         BLOCK_ENTITY_TYPE = new BlockEntityRegistry(blockEntityType);
         ITEM_REGISTRY = new ItemRegistry(defaultItemKey, itemIds);
         MENU_REGISTRY = new MenuRegistry(menuIds);
+
+        Constructor<?> kebabItemStackConstructor = null;
+        try {
+            kebabItemStackConstructor = Class.forName("org.kebab.server.inventory.KebabItemStack").getConstructor(Key.class, int.class, CompoundTag.class);
+        } catch (ClassNotFoundException exception) {
+            LOGGER.error("Cannot find KebabItemStack.class! Please inform a Kebab developer.", exception);
+        } catch (NoSuchMethodException exception) {
+            LOGGER.error("Cannot initialize ItemStack! Please inform a Kebab developer.", exception);
+        }
+        KEBAB_ITEMSTACK_CONSTRUCTOR = kebabItemStackConstructor;
     }
 
     @SuppressWarnings("unchecked")
@@ -114,6 +126,10 @@ public final class KebabRegistry {
 
     public static void register(Object object) {
         OBJECTS.add(object);
+    }
+
+    public static Optional<Constructor<?>> getKebabItemStackConstructor() {
+        return Optional.ofNullable(KEBAB_ITEMSTACK_CONSTRUCTOR);
     }
 
     public static class BlockEntityRegistry {
