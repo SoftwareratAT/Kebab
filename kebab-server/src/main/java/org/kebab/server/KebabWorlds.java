@@ -2,13 +2,22 @@ package org.kebab.server;
 
 import org.kebab.server.world.KebabWorld;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public final class KebabWorlds {
+    private final File worldDirectory;
     private final Collection<KebabWorld> worlds;
     KebabWorlds() {
         this.worlds = new ArrayList<>();
+        this.worldDirectory = new File("./worlds");
+        if (!this.worldDirectory.isDirectory()) {
+            this.worldDirectory.delete();
+        }
+        if (!this.worldDirectory.exists()) {
+            this.worldDirectory.mkdir();
+        }
     }
 
     public void loadWorlds() {
