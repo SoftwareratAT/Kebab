@@ -22,6 +22,7 @@ public final class BlockPosition {
 
     @Deprecated
     public static BlockPosition from(Location location) {
+        if (location == null) throw new NullPointerException("Location cannot be null");
         return new BlockPosition((int) Math.floor(location.getX()), (int) Math.floor(location.getY()), (int) Math.floor(location.getZ()));
     }
 }

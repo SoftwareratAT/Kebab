@@ -14,6 +14,7 @@ public final class BlockState {
     private final CompoundTag tag;
 
     public BlockState(CompoundTag tag) {
+        if (tag == null) throw new NullPointerException("Tag cannot be null");
         this.tag = tag;
     }
 
@@ -25,8 +26,9 @@ public final class BlockState {
         return Key.key(tag.getString("Name"));
     }
 
-    public void setType(Key Key) {
-        tag.putString("Name", Key.toString());
+    public void setType(Key key) {
+        if (key == null) throw new NullPointerException("Key cannot be null");
+        tag.putString("Name", key.toString());
     }
 
     public Map<String, String> getProperties() {
@@ -40,11 +42,13 @@ public final class BlockState {
     }
 
     public Optional<String> getProperty(String key) {
+        if (key == null) return Optional.empty();
         Tag<?> value = tag.getCompoundTag("Properties").get(key);
         return value == null ? Optional.empty() : Optional.of(((StringTag) value).getValue());
     }
 
     public void setProperties(Map<String, String> mapping) {
+        if (mapping == null) throw new NullPointerException("Mapping cannot be null");
         CompoundTag properties = new CompoundTag();
         for (Map.Entry<String, String> entry : mapping.entrySet()) {
             String key = entry.getKey();
@@ -55,6 +59,7 @@ public final class BlockState {
     }
 
     public <T> void setProperty(String key, T value) {
+        if (key == null) throw new NullPointerException("Key cannot be null");
         CompoundTag properties = tag.getCompoundTag("Properties");
         properties.putString(key, ((T) value).toString());
     }

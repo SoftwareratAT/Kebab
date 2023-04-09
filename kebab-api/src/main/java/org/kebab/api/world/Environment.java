@@ -19,6 +19,7 @@ public final class Environment {
      * @param key The environments key
      */
     public static Optional<Environment> fromKey(Key key) {
+        if (key == null) return Optional.empty();
         if (key.equals(NORMAL.getKey())) return Optional.of(NORMAL);
         if (key.equals(NETHER.getKey())) return Optional.of(NETHER);
         if (key.equals(END.getKey())) return Optional.of(END);
@@ -34,6 +35,7 @@ public final class Environment {
      * @throws IllegalArgumentException Thrown if the environment key is already registered.
      */
     public static Environment createCustom(Key key, boolean hasSkyLight) {
+        if (key == null) throw new NullPointerException("Key cannot be null");
         if (REGISTERED_ENVIRONMENTS.stream().anyMatch(environment -> environment.getKey().equals(key))) {
             throw new IllegalArgumentException("An Environment is already created with this Key!");
         }

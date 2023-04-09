@@ -29,6 +29,8 @@ public enum BlockFace {
     }
 
     BlockFace(final BlockFace face1, final BlockFace face2) {
+        if (face1 == null) throw new NullPointerException("BlockFace 1 cannot be null");
+        if (face2 == null) throw new NullPointerException("BlockFace 2 cannot be null");
         this.modX = face1.getModX() + face2.getModX();
         this.modY = face1.getModY() + face2.getModY();
         this.modZ = face1.getModZ() + face2.getModZ();

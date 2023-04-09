@@ -4,6 +4,7 @@ import org.kebab.api.Server;
 import org.kebab.common.KebabRegistry;
 import org.kebab.common.math.NumberConversions;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public final class Location {
@@ -12,6 +13,7 @@ public final class Location {
     private float yaw, pitch;
 
     public Location(World world, double x, double y, double z, float yaw, float pitch) {
+        if (world == null) throw new NullPointerException("World cannot be null");
         this.world = world;
         this.x = x;
         this.y = y;
@@ -29,6 +31,7 @@ public final class Location {
     }
 
     public void setBlockState(BlockState state) {
+        if (state == null) throw new NullPointerException("BlockState cannot be null");
         world.setBlock((int) x, (int) y, (int) z, state);
     }
 
@@ -42,6 +45,7 @@ public final class Location {
     }
 
     public void setWorld(World world) {
+        if (world == null) throw new NullPointerException("World cannot be null!");
         this.world = world;
     }
 
@@ -109,6 +113,8 @@ public final class Location {
     }
 
     public Location setDirection(Vector vector) {
+        if (vector == null) throw new NullPointerException("Vector cannot be null!");
+
         /*
          * Sin = Opp / Hyp
          * Cos = Adj / Hyp
@@ -277,7 +283,7 @@ public final class Location {
 
         World world = (this.world == null) ? null : this.world;
         World otherWorld = (other.world == null) ? null : other.world;
-        if (world != otherWorld && (world == null || !world.equals(otherWorld))) {
+        if (!Objects.equals(world, otherWorld)) {
             return false;
         }
         if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {

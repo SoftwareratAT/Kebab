@@ -9,6 +9,7 @@ public final class ChunkPosition {
     private final int x, z;
 
     public ChunkPosition(World world, int chunkX, int chunkZ) {
+        if (world == null) throw new NullPointerException("World cannot be null");
         this.world = world;
         this.x = chunkX;
         this.z = chunkZ;

@@ -36,6 +36,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector add(Vector vec) {
+        if (vec == null) throw new NullPointerException("Vector cannot be null");
         x += vec.x;
         y += vec.y;
         z += vec.z;
@@ -43,6 +44,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector subtract(Vector vec) {
+        if (vec == null) throw new NullPointerException("Vector cannot be null");
         x -= vec.x;
         y -= vec.y;
         z -= vec.z;
@@ -50,6 +52,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector multiply(Vector vec) {
+        if (vec == null) throw new NullPointerException("Vector cannot be null");
         x *= vec.x;
         y *= vec.y;
         z *= vec.z;
@@ -57,6 +60,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector divide(Vector vec) {
+        if (vec == null) throw new NullPointerException("Vector cannot be null");
         x /= vec.x;
         y /= vec.y;
         z /= vec.z;
@@ -64,6 +68,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector copy(Vector vec) {
+        if (vec == null) throw new NullPointerException("Vector cannot be null");
         x = vec.x;
         y = vec.y;
         z = vec.z;
@@ -79,20 +84,24 @@ public class Vector implements Cloneable {
     }
 
     public double distance(Vector o) {
+        if (o == null) throw new NullPointerException("Vector cannot be null");
         return Math.sqrt(NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z));
     }
 
     public double distanceSquared(Vector o) {
+        if (o == null) throw new NullPointerException("Vector cannot be null");
         return NumberConversions.square(x - o.x) + NumberConversions.square(y - o.y) + NumberConversions.square(z - o.z);
     }
 
     public float angle(Vector other) {
+        if (other == null) throw new NullPointerException("Vector cannot be null");
         double dot = Doubles.constrainToRange(dot(other) / (length() * other.length()), -1.0, 1.0);
 
         return (float) Math.acos(dot);
     }
 
     public Vector midpoint(Vector other) {
+        if (other == null) throw new NullPointerException("Vector cannot be null");
         x = (x + other.x) / 2;
         y = (y + other.y) / 2;
         z = (z + other.z) / 2;
@@ -100,6 +109,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector getMidpoint(Vector other) {
+        if (other == null) throw new NullPointerException("Vector cannot be null");
         double x = (this.x + other.x) / 2;
         double y = (this.y + other.y) / 2;
         double z = (this.z + other.z) / 2;
@@ -128,10 +138,12 @@ public class Vector implements Cloneable {
     }
 
     public double dot(Vector other) {
+        if (other == null) throw new NullPointerException("Vector cannot be null");
         return x * other.x + y * other.y + z * other.z;
     }
 
     public Vector crossProduct(Vector o) {
+        if (o == null) throw new NullPointerException("Vector cannot be null");
         double newX = y * o.z - o.y * z;
         double newY = z * o.x - o.z * x;
         double newZ = x * o.y - o.x * y;
@@ -143,6 +155,7 @@ public class Vector implements Cloneable {
     }
 
     public Vector getCrossProduct(Vector o) {
+        if (o == null) throw new NullPointerException("Vector cannot be null");
         double x = this.y * o.z - o.y * this.z;
         double y = this.z * o.x - o.z * this.x;
         double z = this.x * o.y - o.x * this.y;
@@ -174,10 +187,13 @@ public class Vector implements Cloneable {
     }
 
     public boolean isInAABB(Vector min, Vector max) {
+        if (min == null) throw new NullPointerException("Vector min cannot be null");
+        if (max == null) throw new NullPointerException("Vector max cannot be null");
         return x >= min.x && x <= max.x && y >= min.y && y <= max.y && z >= min.z && z <= max.z;
     }
 
     public boolean isInSphere(Vector origin, double radius) {
+        if (origin == null) throw new NullPointerException("Vector cannot be null");
         return (NumberConversions.square(origin.x - x) + NumberConversions.square(origin.y - y) + NumberConversions.square(origin.z - z)) <= NumberConversions.square(radius);
     }
 
@@ -312,12 +328,10 @@ public class Vector implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Vector)) {
+        if (obj == null) return false;
+        if (!(obj instanceof Vector other)) {
             return false;
         }
-
-        Vector other = (Vector) obj;
-
         return Math.abs(x - other.x) < EPSILON && Math.abs(y - other.y) < EPSILON && Math.abs(z - other.z) < EPSILON && (this.getClass().equals(obj.getClass()));
     }
 
@@ -346,10 +360,12 @@ public class Vector implements Cloneable {
     }
 
     public Location toLocation(World world) {
+        if (world == null) throw new NullPointerException("World cannot be null");
         return new Location(world, x, y, z);
     }
 
     public Location toLocation(World world, float yaw, float pitch) {
+        if (world == null) throw new NullPointerException("World cannot be null");
         return new Location(world, x, y, z, yaw, pitch);
     }
 
@@ -364,10 +380,14 @@ public class Vector implements Cloneable {
     }
 
     public static Vector getMinimum(Vector v1, Vector v2) {
+        if (v1 == null) throw new NullPointerException("Vector 1 cannot be null");
+        if (v2 == null) throw new NullPointerException("Vector 2 cannot be null");
         return new Vector(Math.min(v1.x, v2.x), Math.min(v1.y, v2.y), Math.min(v1.z, v2.z));
     }
 
     public static Vector getMaximum(Vector v1, Vector v2) {
+        if (v1 == null) throw new NullPointerException("Vector 1 cannot be null");
+        if (v2 == null) throw new NullPointerException("Vector 2 cannot be null");
         return new Vector(Math.max(v1.x, v2.x), Math.max(v1.y, v2.y), Math.max(v1.z, v2.z));
     }
 

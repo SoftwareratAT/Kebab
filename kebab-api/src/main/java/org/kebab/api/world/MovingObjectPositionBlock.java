@@ -6,6 +6,9 @@ public class MovingObjectPositionBlock extends MovingObjectPosition {
     private final boolean miss, inside;
 
     public static MovingObjectPosition miss(Vector vector, BlockFace direction, BlockPosition blockPosition) {
+        if (vector == null) throw new NullPointerException("Vector cannot be null");
+        if (direction == null) throw new NullPointerException("Direction cannot be null");
+        if (blockPosition == null) throw new NullPointerException("BlockPosition cannot be null");
         return new MovingObjectPositionBlock(true, vector, direction, blockPosition, false);
     }
 
@@ -22,10 +25,12 @@ public class MovingObjectPositionBlock extends MovingObjectPosition {
     }
 
     public MovingObjectPositionBlock withDirection(BlockFace direction) {
+        if (direction == null) throw new NullPointerException("BlockFace cannot be null");
         return new MovingObjectPositionBlock(this.miss, this.location, direction, this.blockPosition, this.inside);
     }
 
     public MovingObjectPositionBlock withPosition(BlockPosition blockPosition) {
+        if (blockPosition == null) throw new NullPointerException("BlockPosition cannot be null");
         return new MovingObjectPositionBlock(this.miss, this.location, this.direction, blockPosition, this.inside);
     }
 
