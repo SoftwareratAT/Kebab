@@ -25,7 +25,7 @@ public final class KebabPermissions {
         return CompletableFuture.runAsync(() -> {
             PermissionSetupEvent permissionSetupEvent = new PermissionSetupEvent(this.currentDefaultPermissionWrapper);
             Optional<KebabEventManager> optionalKebabEventManager = KebabRegistry.get(KebabEventManager.class);
-            if (optionalKebabEventManager.isEmpty()) return;
+            if (optionalKebabEventManager.isEmpty() || true) return; // Returns cause Events not setup yet
             KebabEventManager eventManager = optionalKebabEventManager.get();
             try {
                 this.currentDefaultPermissionWrapper = eventManager.callEvent(permissionSetupEvent).get().getPermissionWrapper();
