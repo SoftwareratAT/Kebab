@@ -5,13 +5,16 @@ import org.kebab.api.Server;
 import org.kebab.api.entity.Player;
 import org.kebab.api.events.EventManager;
 import org.kebab.api.events.server.ServerReadyEvent;
+import org.kebab.api.packet.PacketManager;
 import org.kebab.api.plugins.Plugin;
 import org.kebab.api.plugins.PluginManager;
 import org.kebab.api.scheduler.Scheduler;
 import org.kebab.api.world.World;
 import org.kebab.common.KebabRegistry;
+import org.kebab.common.utils.ConsoleColor;
 import org.kebab.server.entity.KebabPlayer;
 import org.kebab.server.events.KebabEventManager;
+import org.kebab.server.network.KebabPacketManager;
 import org.kebab.server.network.ServerConnection;
 import org.kebab.server.plugins.KebabPluginManager;
 import org.kebab.server.scheduler.KebabScheduler;
@@ -39,6 +42,7 @@ public final class KebabServer implements Server {
     private final KebabWorlds kebabWorlds;
     private final KebabPlayers kebabPlayers;
     private final KebabPermissions kebabPermissions;
+    private final KebabPacketManager packetManager;
     private final ServerConnection serverConnection;
     KebabServer(String host, int port) {
         KebabRegistry.register(this);
@@ -48,8 +52,9 @@ public final class KebabServer implements Server {
         this.scheduler = new KebabScheduler(this);
         this.kebabWorlds = new KebabWorlds();
         this.kebabPlayers = new KebabPlayers();
-        this.pluginManager = new KebabPluginManager(this, this.eventManager, this.scheduler);
+        this.pluginManager = new KebabPluginManager(this);
         this.kebabPermissions = new KebabPermissions();
+        this.packetManager = new KebabPacketManager();
         this.serverConnection = new ServerConnection(this, new InetSocketAddress(host, port));
     }
 
@@ -57,7 +62,7 @@ public final class KebabServer implements Server {
         if (this.running.get()) return;
         long start = System.currentTimeMillis();
 
-        LOGGER.info("Loading plugins...");
+        LOGGER.info(ConsoleColor.CYAN.apply("Loading plugins..."));
         startPlugins();
 
         LOGGER.info("Setting up permissions...");
@@ -81,7 +86,7 @@ public final class KebabServer implements Server {
         ServerReadyEvent readyEvent = new ServerReadyEvent(this);
         this.eventManager.callEventAndForget(readyEvent);
         long timeInSeconds = System.currentTimeMillis() - start;
-        LOGGER.info("Successfully started in " + timeInSeconds + "ms");
+        LOGGER.info(ConsoleColor.GREEN.apply("Successfully started in " + timeInSeconds + "ms"));
     }
 
     private void startPlugins() {
@@ -101,7 +106,7 @@ public final class KebabServer implements Server {
 
     private void shutdown(Consumer<Player> shutdownAction, boolean exit) {
         if (!this.running.get()) return;
-        LOGGER.info("Shutting down...");
+        LOGGER.info(ConsoleColor.RED.apply("Shutting down..."));
         for (KebabPlayer player : new ArrayList<>(this.kebabPlayers.getPlayers())) {
             shutdownAction.accept(player);
             try {
@@ -127,7 +132,7 @@ public final class KebabServer implements Server {
             plugin.stop();
         }
 
-        LOGGER.info("Terminating... Goodbye!");
+        LOGGER.info(ConsoleColor.GREEN.apply("Terminating... Goodbye!"));
         if (exit) System.exit(0);
     }
 
@@ -196,5 +201,10 @@ public final class KebabServer implements Server {
     @Override
     public Scheduler getScheduler() {
         return this.scheduler;
+    }
+
+    @Override
+    public PacketManager getPacketManager() {
+        return this.packetManager;
     }
 }

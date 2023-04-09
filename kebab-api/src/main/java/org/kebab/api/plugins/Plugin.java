@@ -1,7 +1,9 @@
 package org.kebab.api.plugins;
 
+import org.kebab.api.KebabException;
 import org.kebab.api.Server;
 import org.kebab.api.events.EventManager;
+import org.kebab.api.packet.PacketManager;
 import org.kebab.api.scheduler.Scheduler;
 import org.kebab.common.plugin.PluginConfiguration;
 import org.slf4j.Logger;
@@ -13,20 +15,22 @@ import java.util.Optional;
  * Represents a Kebab plugin.
  */
 public abstract class Plugin {
-    private Logger logger;
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private Server server;
     private PluginManager pluginManager;
     private EventManager eventManager;
     private Scheduler scheduler;
+    private PacketManager packetManager;
     private PluginConfiguration pluginConfiguration;
 
     public Plugin() {}
 
-    private Plugin(Server server, PluginManager pluginManager, EventManager eventManager, Scheduler scheduler, PluginConfiguration configuration) {
+    private Plugin(Server server, PluginConfiguration configuration) {
         this.server = server;
-        this.pluginManager = pluginManager;
-        this.eventManager = eventManager;
-        this.scheduler = scheduler;
+        this.pluginManager = server.getPluginManager();
+        this.eventManager = server.getEventManager();
+        this.scheduler = server.getScheduler();
+        this.packetManager = server.getPacketManager();
         this.pluginConfiguration = configuration;
         Optional<String> pluginName = configuration.getPluginName();
         if (pluginName.isEmpty()) this.logger = LoggerFactory.getLogger(getClass());
@@ -58,24 +62,32 @@ public abstract class Plugin {
         return this.logger;
     }
 
-    /**
-     *
-     */
     public final Server getServer() {
+        if (this.server == null) throw new KebabException("Server not initialized yet.");
         return this.server;
     }
+
     public final PluginManager getPluginManager() {
+        if (this.server == null) throw new KebabException("PluginManager not initialized yet.");
         return this.pluginManager;
     }
+
     public final EventManager getEventManager() {
+        if (this.server == null) throw new KebabException("EventManager not initialized yet.");
         return this.eventManager;
     }
 
     public final Scheduler getScheduler() {
+        if (this.server == null) throw new KebabException("Scheduler not initialized yet.");
         return this.scheduler;
     }
 
-    PluginConfiguration getPluginConfiguration() {
+    public final PacketManager getPacketManager() {
+        if (this.server == null) throw new KebabException("PacketManager not initialized yet.");
+        return this.packetManager;
+    }
+
+    final PluginConfiguration getPluginConfiguration() {
         return this.pluginConfiguration;
     }
 }
