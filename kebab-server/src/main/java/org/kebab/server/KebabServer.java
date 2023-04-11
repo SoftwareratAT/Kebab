@@ -65,6 +65,8 @@ public final class KebabServer implements Server {
         LOGGER.info(ConsoleColor.CYAN.apply("Loading plugins..."));
         startPlugins();
 
+        this.running.set(true);
+
         LOGGER.info("Setting up permissions...");
         try {
             kebabPermissions.callPermissionSetupEvent().get(5, TimeUnit.SECONDS);
@@ -72,10 +74,11 @@ public final class KebabServer implements Server {
             LOGGER.error("Cannot setup Permissions. Using defaults", exception);
         }
 
+        LOGGER.info("Loading schematics...");
+        this.kebabWorlds.loadSchematics();
+
         LOGGER.info("Loading worlds...");
         this.kebabWorlds.loadWorlds();
-
-        this.running.set(true);
 
         LOGGER.info("Starting Tick-threads...");
         this.scheduler.startTicks();
@@ -107,29 +110,37 @@ public final class KebabServer implements Server {
     private void shutdown(Consumer<Player> shutdownAction, boolean exit) {
         if (!this.running.get()) return;
         LOGGER.info(ConsoleColor.RED.apply("Shutting down..."));
-        for (KebabPlayer player : new ArrayList<>(this.kebabPlayers.getPlayers())) {
-            shutdownAction.accept(player);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) {}
-        }
-        LOGGER.info("Kicking players...");
-        for (KebabPlayer player : new ArrayList<>(this.kebabPlayers.getPlayers())) {
-            player.disconnect(Component.empty());
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) {}
+        Collection<KebabPlayer> onlinePlayers = this.kebabPlayers.getPlayers();
+        if (!onlinePlayers.isEmpty()) {
+            for (KebabPlayer player : new ArrayList<>(onlinePlayers)) {
+                shutdownAction.accept(player);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) {}
+            }
+            LOGGER.info("Kicking players...");
+            for (KebabPlayer player : new ArrayList<>(onlinePlayers)) {
+                player.disconnect(Component.empty());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) {}
+            }
         }
 
         this.running.set(false);
 
-        LOGGER.info("Closing ServerSocket...");
-        this.serverConnection.stopSocket();
+        if (this.serverConnection.isRunning()) {
+            LOGGER.info("Closing ServerSocket...");
+            this.serverConnection.stopSocket();
+        }
 
-        LOGGER.info("Stopping plugins...");
-        for (Plugin plugin : this.pluginManager.getPlugins()) {
-            LOGGER.info("Stopping plugin " + plugin.getPluginName() + " version " + plugin.getVersion() + "...");
-            plugin.stop();
+        Collection<Plugin> plugins = this.pluginManager.getPlugins();
+        if (!plugins.isEmpty()) {
+            LOGGER.info("Stopping plugins...");
+            for (Plugin plugin : plugins) {
+                LOGGER.info("Stopping plugin " + plugin.getPluginName() + " version " + plugin.getVersion() + "...");
+                plugin.stop();
+            }
         }
 
         LOGGER.info(ConsoleColor.GREEN.apply("Terminating... Goodbye!"));
