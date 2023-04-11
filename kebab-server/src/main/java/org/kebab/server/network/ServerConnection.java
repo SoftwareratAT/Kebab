@@ -52,9 +52,13 @@ public final class ServerConnection extends Thread {
 
     public void stopSocket() {
         try {
-            this.serverSocket.close();
+            if (this.serverSocket != null) this.serverSocket.close();
         } catch (Exception exception) {
             LOGGER.error("Cannot close ServerSocket", exception);
         }
+    }
+
+    public boolean isRunning() {
+        return this.serverSocket != null && !this.serverSocket.isClosed();
     }
 }
